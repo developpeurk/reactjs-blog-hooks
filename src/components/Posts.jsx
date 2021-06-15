@@ -80,5 +80,32 @@ export default function Posts() {
       ))
     );
   };
-  return <div className="posts">{renderPosts()}</div>;
+
+  const renderTop = () => {
+    const topPosts = posts.sort(
+      (postOne, postTwo) => postTwo.vote_count - postOne.vote_count
+    );
+    return topPosts.map((post, index) => {
+      return (
+        <Link key={index} to={`/post/${post.id}`}>
+          <h3 className="post-title trend-link">
+            {' '}
+            {index + 1}
+            {' - '}
+            {post.title}
+          </h3>
+        </Link>
+      );
+    });
+  };
+
+  return (
+    <div className="main-content">
+      <div className="posts">{renderPosts()}</div>
+      <div className="sidebar">
+        <h3 className="sidebar-title">Trends</h3>
+        <div className="sidebar-content">{renderTop()}</div>
+      </div>
+    </div>
+  );
 }

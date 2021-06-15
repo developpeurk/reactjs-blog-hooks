@@ -79,7 +79,7 @@ body {
 }
 
 .post {
-    width: 70%;
+    width: 91%;
     padding: 10px
 }
 
@@ -224,11 +224,11 @@ body {
 }
 
 .main-content {
-    display: flex
+    display: flex;
 }
 
 .sidebar {
-    width: 35%;
+    width: 119%;
     padding: 10px;
     background: beige;
     border-radius: 10px;

@@ -1,11 +1,16 @@
 import React from 'react';
 import firebase from '../firebase';
 import moment from 'moment';
+import AuthContext from './AuthContext/index';
+import {Link} from 'react-router-dom';
 function PostDetails(props) {
   const [post, setPost] = React.useState(null);
   const postId = props.match.params.postId;
   const postRef = firebase.collection('posts').doc(postId);
   const [comment, setComment] = React.useState('');
+  const { authUser, firebaseAuth } = React.useContext(AuthContext);
+
+
 
   React.useEffect(() => {
     getPost();
@@ -53,6 +58,8 @@ function PostDetails(props) {
               <h3>comments: {post.comments && post.comments.length}</h3>
             </div>
             {/* add comments form  */}
+            { authUser ? (
+              <>
             <textarea
               className="form-control"
               name=""
@@ -66,7 +73,11 @@ function PostDetails(props) {
               <button onClick={() => addComment()} className="btn btn-primary">
                 Add
               </button>
-            </div>
+                </div>
+                </>
+            ) : (
+              <Link to="/login">Connect to comment</Link>
+            ) }
 
             {post.comments &&
               post.comments.map((comment, index) => (

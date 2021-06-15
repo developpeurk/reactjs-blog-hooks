@@ -1,7 +1,14 @@
 import React from 'react';
 import { withRouter, NavLink } from 'react-router-dom';
+import AuthContext from './AuthContext/index';
 
 function Header() {
+  const { authUser, firebaseAuth } = React.useContext( AuthContext );
+  
+  const logout = async() =>
+  {
+    await firebaseAuth.signOut();
+  }
   return (
     <div className="Header">
       <img
@@ -16,12 +23,29 @@ function Header() {
         <NavLink to="/search" className="link">
           Search
         </NavLink>
-        <NavLink to="/login" className="link">
-          Login
-        </NavLink>
-        <NavLink to="/register" className="link">
-          Register
-        </NavLink>
+        { authUser ? (
+             <>
+                <div className="link">
+                      {authUser.displayName}
+                 </div>
+                <div className="link logout" onClick={() => logout()}>
+                     Logout
+                </div>
+            </>
+            ) : (
+          <>
+                  <NavLink to="/login" className="link">
+                  Login
+            </NavLink>
+            <NavLink to="/register" className="link">
+            Register
+              </NavLink>
+              </>
+            
+      )
+      }
+
+        
       </div>
     </div>
   );
