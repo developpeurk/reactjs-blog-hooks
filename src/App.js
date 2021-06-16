@@ -9,13 +9,14 @@ import Register from "./components/Register"
 import { firebaseAuth } from './firebase';
 import React from 'react';
 import AuthContext from './components/AuthContext/index';
+import Search from './components/Search';
 function App() {
   const [authUser, setAuthUser] = React.useState(null);
   React.useEffect(() => {
     const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
       if (user) {
         setAuthUser(user);
-        console.log(user);
+        // console.log(user);
       } else {
         setAuthUser(null);
       }
@@ -28,16 +29,17 @@ function App() {
   return (
     <BrowserRouter>
       <div className="container">
-        <AuthContext.Provider value={{authUser, firebaseAuth}}>
-        <Header />
+        <AuthContext.Provider value={{ authUser, firebaseAuth }}>
+          <Header />
           <Switch>
             <Route path="/" exact component={Posts} />
             <Route path="/create" exact component={CreatePost} />
             <Route path="/post/:postId" exact component={PostDetails} />
             <Route path="/login" exact component={Login} />
             <Route path="/register" exact component={Register} />
-            </Switch>
-          </AuthContext.Provider>
+            <Route path="/search" exact component={Search} />
+          </Switch>
+        </AuthContext.Provider>
       </div>
     </BrowserRouter>
   );

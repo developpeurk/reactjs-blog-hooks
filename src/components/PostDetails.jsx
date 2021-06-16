@@ -10,17 +10,47 @@ function PostDetails(props) {
   const [comment, setComment] = React.useState('');
   const { authUser, firebaseAuth } = React.useContext(AuthContext);
 
-
-
   React.useEffect(() => {
-    getPost();
-  }, []);
+    let issubscribed = true
+    if ( issubscribed )
+    {
+      postRef.get().then((doc) => {
+        setPost({ ...doc.data(), id: doc.id });
+      });
+      
+    }
+    return () =>
+    {
+      issubscribed = false;
+    }
+  }, [post,postRef]);
 
-  const getPost = () => {
-    postRef.get().then((doc) => {
-      setPost({ ...doc.data(), id: doc.id });
+ 
+  
+
+  //
+  const voteUp = (postId) => {
+    const post = firebase.collection('posts').doc(postId);
+    post.get().then((doc) => {
+      if (doc.exists) {
+        const previousVoteCount = doc.data().vote_count;
+        post.update({ vote_count: previousVoteCount + 1 });
+      }
     });
   };
+
+  const voteDown = (postId) => {
+    const post = firebase.collection('posts').doc(postId);
+    post.get().then((doc) => {
+      if (doc.exists) {
+        const previousVoteCount = doc.data().vote_count;
+        if (previousVoteCount > 0)
+          post.update({ vote_count: previousVoteCount - 1 });
+        else alert('impossible de votez (-) !');
+      }
+    });
+  };
+  //
 
   const addComment = () => {
     postRef.get().then((doc) => {
@@ -53,31 +83,44 @@ function PostDetails(props) {
               <span className="posted-by">{post.postedBy.name}</span>
               <span className="date">{moment(post.created_at).fromNow()}</span>
             </h5>
-            <p className="post-body">{post.body}</p>
+            <p className="post-body">{ post.body }</p>
+            <div className="votes">
+              <div className="up" onClick={() => voteUp(post.id)}>
+                &#8593;
+              </div>
+              <div className="down" onClick={() => voteDown(post.id)}>
+                &#8595;
+              </div>
+              <div className="count">{post.vote_count}</div>
+            </div>
+          
             <div className="comments">
               <h3>comments: {post.comments && post.comments.length}</h3>
             </div>
             {/* add comments form  */}
-            { authUser ? (
+            {authUser ? (
               <>
-            <textarea
-              className="form-control"
-              name=""
-              value={comment}
-              placeholder="comments"
-              onChange={(event) => setComment(event.target.value)}
-              cols="30"
-              rows="10"
-            ></textarea>
-            <div>
-              <button onClick={() => addComment()} className="btn btn-primary">
-                Add
-              </button>
+                <textarea
+                  className="form-control"
+                  name=""
+                  value={comment}
+                  placeholder="comments"
+                  onChange={(event) => setComment(event.target.value)}
+                  cols="30"
+                  rows="10"
+                ></textarea>
+                <div>
+                  <button
+                    onClick={() => addComment()}
+                    className="btn btn-primary"
+                  >
+                    Add
+                  </button>
                 </div>
-                </>
+              </>
             ) : (
               <Link to="/login">Connect to comment</Link>
-            ) }
+            )}
 
             {post.comments &&
               post.comments.map((comment, index) => (

@@ -31,7 +31,7 @@ function Login({ history }) {
         return userLogged;
       });
 
-    console.log(loggedUser);
+    //console.log(loggedUser);
     history.push('/');
   };
 

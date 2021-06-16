@@ -35,7 +35,7 @@ function Register({ history }) {
         });
         return userCreated;
       });
-    console.log(newUser);
+    //console.log(newUser);
     history.push('/');
   };
 
