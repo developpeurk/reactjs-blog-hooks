@@ -12,13 +12,16 @@ function PostDetails(props) {
 
   React.useEffect(() => {
     let issubscribed = true
-    if ( issubscribed )
+   
+    postRef.get().then( ( doc ) =>
     {
-      postRef.get().then((doc) => {
-        setPost({ ...doc.data(), id: doc.id });
+      if ( issubscribed )
+      {
+        setPost( { ...doc.data(), id: doc.id } );
+      }
       });
       
-    }
+   
     return () =>
     {
       issubscribed = false;
