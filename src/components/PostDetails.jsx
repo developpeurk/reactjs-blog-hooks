@@ -3,33 +3,27 @@ import firebase from '../firebase';
 import moment from 'moment';
 import AuthContext from './AuthContext/index';
 import {Link} from 'react-router-dom';
+
 function PostDetails(props) {
   const [post, setPost] = React.useState(null);
   const postId = props.match.params.postId;
   const postRef = firebase.collection('posts').doc(postId);
   const [comment, setComment] = React.useState('');
-  const { authUser, firebaseAuth } = React.useContext(AuthContext);
+  const { authUser } = React.useContext(AuthContext);
 
   React.useEffect(() => {
-    let issubscribed = true
-   
-    postRef.get().then( ( doc ) =>
-    {
-      if ( issubscribed )
-      {
-        setPost( { ...doc.data(), id: doc.id } );
-      }
-      });
-      
-   
-    return () =>
-    {
-      issubscribed = false;
-    }
-  }, [post,postRef]);
+    let issubscribed = true;
 
- 
-  
+    postRef.get().then((doc) => {
+      if (issubscribed) {
+        setPost({ ...doc.data(), id: doc.id });
+      }
+    });
+
+    return () => {
+      issubscribed = false;
+    };
+  }, [post, postRef]);
 
   //
   const voteUp = (postId) => {
@@ -60,7 +54,7 @@ function PostDetails(props) {
       if (doc.exists) {
         const previousComments = doc.data().comments || [];
         const commentText = {
-          postedBy: { id: '336', name: 'samadi' },
+          postedBy: { id: authUser.uid, name: authUser.displayName },
           created_at: Date.now(),
           text: comment,
         };
@@ -86,7 +80,7 @@ function PostDetails(props) {
               <span className="posted-by">{post.postedBy.name}</span>
               <span className="date">{moment(post.created_at).fromNow()}</span>
             </h5>
-            <p className="post-body">{ post.body }</p>
+            <p className="post-body">{post.body}</p>
             <div className="votes">
               <div className="up" onClick={() => voteUp(post.id)}>
                 &#8593;
@@ -96,7 +90,7 @@ function PostDetails(props) {
               </div>
               <div className="count">{post.vote_count}</div>
             </div>
-          
+
             <div className="comments">
               <h3>comments: {post.comments && post.comments.length}</h3>
             </div>

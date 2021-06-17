@@ -24,7 +24,10 @@ function Header() {
           Search
         </NavLink>
         { authUser ? (
-             <>
+          <>
+            <NavLink to="/create" className="link">
+                  Create post
+            </NavLink>
                 <div className="link">
                       {authUser.displayName}
                  </div>
