@@ -2,10 +2,12 @@ import React from 'react';
 import firebase from '../firebase';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-import { render } from '@testing-library/react';
+import Sidebar from './Sidebar';
 
 export default function Posts() {
   const [posts, setPosts] = React.useState([]);
+  const [show, setShow] = React.useState(5);
+
   React.useEffect(() => {
     const unsubscribe = getPosts();
     return () => {
@@ -34,6 +36,11 @@ export default function Posts() {
       }
     });
   };
+
+  const loadMore = () => {
+    setShow(show + 5);
+  };
+
   const getPosts = () => {
     return firebase
       .collection('posts')
@@ -51,7 +58,7 @@ export default function Posts() {
   const renderPosts = () => {
     return (
       posts &&
-      posts.map((post, index) => (
+      posts.slice(0, show).map((post, index) => (
         <div key={index} className="post">
           <div className="post-image">
             <img src={post.image} alt="" />
@@ -81,30 +88,23 @@ export default function Posts() {
     );
   };
 
-  const renderTop = () => {
-    const topPosts = posts.sort(
-      (postOne, postTwo) => postTwo.vote_count - postOne.vote_count
-    );
-    return topPosts.map((post, index) => {
-      return (
-        <Link key={index} to={`/post/${post.id}`}>
-          <h3 className="post-title trend-link">
-            {' '}
-            {index + 1}
-            {' - '}
-            {post.title}
-          </h3>
-        </Link>
-      );
-    });
-  };
-
   return (
     <div className="main-content">
-      <div className="posts">{renderPosts()}</div>
+      <div className="posts">
+        {renderPosts()}
+        {show < posts.length && (
+          <button onClick={() => loadMore()} className="btn-load">
+            ...load more
+          </button>
+        )}
+      </div>
       <div className="sidebar">
         <h3 className="sidebar-title">Trends</h3>
-        <div className="sidebar-content">{renderTop()}</div>
+        <div className="sidebar-content">
+          
+          <Sidebar  />
+        
+        </div>
       </div>
     </div>
   );

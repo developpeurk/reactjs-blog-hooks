@@ -6,7 +6,8 @@ function Login({ history }) {
     email: '',
     password: '',
   });
-
+  
+  const [firebaseError, setFirebaseError] = React.useState(null);
   const handleInputChange = (event) => {
     setUserCredentials({
       ...userCredentials,
@@ -28,15 +29,30 @@ function Login({ history }) {
     const loggedUser = firebaseAuth
       .signInWithEmailAndPassword(email, password)
       .then((userLogged) => {
-        return userLogged;
-      });
-
-    //console.log(loggedUser);
+       //console.log(loggedUser);
     history.push('/');
+      } ).catch((error) => setFirebaseError(error.code));
+
+    
   };
+
+  const checkServerErrors = () =>
+  {
+    if ( firebaseError !=null )
+    {
+      if (firebaseError== "auth/wrong-password" ||firebaseError == "auth/user-not-found")
+      {
+        return(  <p className="error-text">Email or password are incorrect!</p>
+        )
+        
+      }
+    
+    }
+  }
 
   return (
     <div className="form-container">
+      {checkServerErrors()}
       <h2 className="register-form-title">Connexion</h2>
       <form onSubmit={handleFormSubmit}>
         <input
